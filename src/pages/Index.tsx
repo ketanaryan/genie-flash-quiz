@@ -4,6 +4,7 @@ import { FileUpload } from '@/components/FileUpload';
 import { LoadingView } from '@/components/LoadingView';
 import { StudyResults } from '@/components/StudyResults';
 import { ErrorView } from '@/components/ErrorView';
+import { PDFService } from '@/services/pdfService';
 
 type AppState = 'idle' | 'loading' | 'success' | 'error';
 
@@ -27,98 +28,41 @@ const Index = () => {
 
   const handleFileSelect = (selectedFile: File) => {
     setFile(selectedFile);
+    console.log('File selected:', selectedFile.name, selectedFile.type);
   };
 
   const handleGenerateStudySet = async () => {
     if (!file) return;
 
     setAppState('loading');
+    console.log('Starting PDF analysis for file:', file.name);
 
     try {
-      // Simulate API call with FormData
-      const formData = new FormData();
-      formData.append('file', file);
+      // Extract text from PDF
+      console.log('Extracting text from PDF...');
+      const extractedText = await PDFService.extractTextFromPDF(file);
+      console.log('Text extracted, length:', extractedText.length);
+      
+      if (extractedText.length < 50) {
+        throw new Error('Could not extract enough readable text from the PDF. Please ensure the PDF contains text content.');
+      }
 
-      // Mock API delay
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // Generate study materials from extracted text
+      console.log('Generating study materials from extracted text...');
+      const generatedStudyData = await PDFService.generateStudyMaterials(extractedText);
+      console.log('Study materials generated:', generatedStudyData);
 
-      // Mock successful response
-      const mockData: StudyData = {
-        quiz: [
-          {
-            question: "What is the primary function of React components?",
-            options: [
-              "Data storage",
-              "Building user interfaces",
-              "Server management",
-              "Database queries"
-            ],
-            correctAnswer: "Building user interfaces"
-          },
-          {
-            question: "What does JSX stand for?",
-            options: [
-              "JavaScript XML",
-              "Java Syntax Extension",
-              "JavaScript Extension",
-              "JSON XML"
-            ],
-            correctAnswer: "JavaScript XML"
-          },
-          {
-            question: "Which hook is used for state management in functional components?",
-            options: [
-              "useEffect",
-              "useContext",
-              "useState",
-              "useReducer"
-            ],
-            correctAnswer: "useState"
-          },
-          {
-            question: "What is the Virtual DOM?",
-            options: [
-              "A database system",
-              "A lightweight copy of the real DOM",
-              "A server framework",
-              "A styling library"
-            ],
-            correctAnswer: "A lightweight copy of the real DOM"
-          }
-        ],
-        flashcards: [
-          {
-            term: "Component",
-            definition: "A reusable piece of UI that can accept props and return JSX elements."
-          },
-          {
-            term: "Props",
-            definition: "Short for properties, these are read-only data passed from parent to child components."
-          },
-          {
-            term: "State",
-            definition: "Local data storage that belongs to a component and can trigger re-renders when changed."
-          },
-          {
-            term: "Hook",
-            definition: "Special functions that let you use state and other React features in functional components."
-          },
-          {
-            term: "JSX",
-            definition: "A syntax extension for JavaScript that allows you to write HTML-like code in React components."
-          },
-          {
-            term: "Virtual DOM",
-            definition: "A programming concept where a virtual representation of the UI is kept in memory and synced with the real DOM."
-          }
-        ]
-      };
-
-      setStudyData(mockData);
+      setStudyData(generatedStudyData);
       setAppState('success');
     } catch (error) {
+      console.error('Error processing PDF:', error);
       setAppState('error');
-      setErrorMessage("Sorry, we couldn't process your file. Please try another.");
+      
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Sorry, we couldn't process your PDF file. Please ensure it contains readable text and try again.");
+      }
     }
   };
 
@@ -138,7 +82,7 @@ const Index = () => {
             StudyGenie
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Generate interactive study sets from your notes instantly
+            Upload your PDF and get AI-generated quizzes and flashcards based on the actual content
           </p>
         </div>
 
