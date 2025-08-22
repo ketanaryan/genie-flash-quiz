@@ -1,121 +1,119 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+/* Custom CSS */
+body {
+  @apply bg-background text-foreground;
+}
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+.container {
+  @apply max-w-7xl mx-auto px-4 py-8;
+}
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+.hero-button {
+  @apply inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2;
+}
 
-    --primary: 263 70% 60%;
-    --primary-foreground: 0 0% 98%;
+.input {
+  @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+}
 
-    --secondary: 240 4.8% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+.quiz-card {
+  @apply p-6 bg-card-gradient rounded-xl border border-border transition-all duration-300 hover:shadow-lg;
+}
 
-    --muted: 240 5.9% 10%;
-    --muted-foreground: 240 5% 64.9%;
+.tab-button {
+  @apply px-4 py-2 rounded-md transition-colors;
+}
 
-    --accent: 240 4.8% 15.9%;
-    --accent-foreground: 0 0% 98%;
+.tab-button.active {
+  @apply bg-primary text-primary-foreground shadow-md;
+}
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+.tab-button.inactive {
+  @apply hover:bg-accent hover:text-accent-foreground;
+}
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 263 70% 60%;
+/* Animations */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
 
-    --radius: 0.75rem;
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-in-out forwards;
+}
 
-    /* Custom StudyGenie Colors */
-    --gradient-start: 263 70% 60%;
-    --gradient-end: 220 70% 55%;
-    --surface: 240 8% 8%;
-    --surface-alt: 240 6% 12%;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
   }
-
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground font-medium;
-    background: linear-gradient(135deg, hsl(240 10% 3.9%) 0%, hsl(240 8% 8%) 100%);
-    min-height: 100vh;
-  }
-
-  .flip-card {
-    perspective: 1000px;
-  }
-
-  .flip-card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    transition: transform 0.6s;
-    transform-style: preserve-3d;
-  }
-
-  .flip-card.flipped .flip-card-inner {
-    transform: rotateY(180deg);
-  }
-
-  .flip-card-front, .flip-card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    border-radius: var(--radius);
-  }
-
-  .flip-card-back {
-    transform: rotateY(180deg);
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
-@layer components {
-  .hero-button {
-    @apply bg-hero-gradient text-primary-foreground font-semibold px-8 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
-  }
+/* Flashcard styles */
+.flashcard {
+  width: 100%;
+  height: 400px;
+  perspective: 1000px;
+  cursor: pointer;
+}
 
-  .upload-zone {
-    @apply border-2 border-dashed border-primary/30 bg-card-gradient rounded-xl p-12 text-center hover:border-primary/50 transition-all duration-300 cursor-pointer;
-  }
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
 
-  .upload-zone:hover {
-    @apply shadow-lg;
-  }
+.flashcard.flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
 
-  .tab-button {
-    @apply px-6 py-3 rounded-lg font-medium transition-all duration-300;
-  }
+.flashcard-front, .flashcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  border-radius: 1rem;
+  border: 1px solid hsl(var(--border));
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card)/.8) 100%);
+}
 
-  .tab-button.active {
-    @apply bg-hero-gradient text-primary-foreground shadow-md;
-  }
+.flashcard-back {
+  transform: rotateY(180deg);
+}
 
-  .tab-button.inactive {
-    @apply bg-surface text-muted-foreground hover:bg-surface-alt hover:text-foreground;
-  }
+/* Enhanced animations */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
 
-  .quiz-card {
-    @apply bg-card-gradient border border-border rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300;
-  }
+.quiz-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
 
-  .flashcard {
-    @apply bg-card-gradient border border-border rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer;
-  }
+.flashcard:hover .flashcard-inner {
+  transform: scale(1.02);
+}
 
-  .nav-button {
-    @apply bg-surface hover:bg-surface-alt text-foreground border border-border rounded-lg p-3 transition-all duration-300 hover:shadow-md;
-  }
+.flashcard.flipped:hover .flashcard-inner {
+  transform: rotateY(180deg) scale(1.02);
 }

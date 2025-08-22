@@ -99,6 +99,7 @@ Please generate:
 Requirements:
 - Questions should test understanding of key concepts from the document
 - Each question should have exactly 4 plausible options
+- Include detailed explanations for why the correct answer is right and why wrong answers are incorrect
 - Flashcards should cover important terms, concepts, or facts from the content
 - Make sure all content is directly related to the document provided
 
@@ -108,7 +109,8 @@ Format your response as valid JSON in this exact structure:
     {
       "question": "Question text here?",
       "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correctAnswer": "Option A"
+      "correctAnswer": "Option A",
+      "explanation": "Detailed explanation of why this is correct and why other options are wrong"
     }
   ],
   "flashcards": [
