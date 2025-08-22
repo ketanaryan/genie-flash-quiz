@@ -35,33 +35,33 @@ const Index = () => {
     if (!file) return;
 
     setAppState('loading');
-    console.log('Starting PDF analysis with Gemini AI for file:', file.name);
+    console.log('Starting PDF analysis for file:', file.name);
 
     try {
-      // Extract text from PDF using Gemini
-      console.log('Extracting and analyzing PDF content...');
+      // Extract text from PDF
+      console.log('Extracting text from PDF...');
       const extractedText = await PDFService.extractTextFromPDF(file);
-      console.log('Text successfully extracted and analyzed');
+      console.log('Text extracted, length:', extractedText.length);
       
-      if (extractedText.length < 100) {
-        throw new Error('The PDF appears to contain insufficient readable content. Please try a different PDF with more text.');
+      if (extractedText.length < 50) {
+        throw new Error('Could not extract enough readable text from the PDF. Please ensure the PDF contains text content.');
       }
 
-      // Generate study materials using the extracted text
-      console.log('Generating personalized study materials...');
+      // Generate study materials from extracted text
+      console.log('Generating study materials from extracted text...');
       const generatedStudyData = await PDFService.generateStudyMaterials(extractedText);
-      console.log('Study materials successfully generated:', generatedStudyData);
+      console.log('Study materials generated:', generatedStudyData);
 
       setStudyData(generatedStudyData);
       setAppState('success');
     } catch (error) {
-      console.error('Error processing PDF with Gemini:', error);
+      console.error('Error processing PDF:', error);
       setAppState('error');
       
       if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
-        setErrorMessage("We couldn't process your PDF. This might be due to the PDF format or content. Please try a different PDF with clear, readable text.");
+        setErrorMessage("Sorry, we couldn't process your PDF file. Please ensure it contains readable text and try again.");
       }
     }
   };
@@ -82,7 +82,7 @@ const Index = () => {
             StudyGenie
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Upload your PDF and get AI-generated quizzes and flashcards powered by Google Gemini
+            Upload your PDF and get AI-generated quizzes and flashcards based on the actual content
           </p>
         </div>
 
