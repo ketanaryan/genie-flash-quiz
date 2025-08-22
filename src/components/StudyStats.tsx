@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Trophy, Target, BookOpen, Clock } from 'lucide-react';
 
 interface StudyStatsProps {
-  quizScore?: number;
+  correctAnswers?: number; // Renamed from quizScore for clarity
   totalQuestions?: number;
   studyTime?: number;
   flashcardsReviewed?: number;
@@ -11,13 +10,14 @@ interface StudyStatsProps {
 }
 
 export const StudyStats: React.FC<StudyStatsProps> = ({
-  quizScore = 0,
+  correctAnswers = 0, // Updated prop name
   totalQuestions = 0,
   studyTime = 0,
   flashcardsReviewed = 0,
   totalFlashcards = 0
 }) => {
-  const quizPercentage = totalQuestions > 0 ? Math.round((quizScore / totalQuestions) * 100) : 0;
+  // Calculation is for accuracy, so we'll rename the variable for clarity
+  const quizAccuracy = totalQuestions > 0 ? Math.round((correctAnswers / totalQuestions) * 100) : 0;
   const flashcardProgress = totalFlashcards > 0 ? Math.round((flashcardsReviewed / totalFlashcards) * 100) : 0;
   
   const formatTime = (seconds: number): string => {
@@ -45,12 +45,12 @@ export const StudyStats: React.FC<StudyStatsProps> = ({
                 <Target className="h-8 w-8 text-white" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-green-400 mb-1">{quizPercentage}%</div>
-            <div className="text-sm text-slate-300">Quiz Score</div>
+            <div className="text-3xl font-bold text-green-400 mb-1">{quizAccuracy}%</div>
+            <div className="text-sm text-slate-300">Quiz Accuracy</div> {/* <-- IMPROVEMENT: Changed Label */}
             <div className="mt-2 w-full bg-slate-700 rounded-full h-2">
               <div 
                 className="progress-bar h-2" 
-                style={{ width: `${quizPercentage}%` }}
+                style={{ width: `${quizAccuracy}%` }}
               ></div>
             </div>
           </div>
@@ -87,7 +87,7 @@ export const StudyStats: React.FC<StudyStatsProps> = ({
                 <Trophy className="h-8 w-8 text-white" />
               </div>
             </div>
-            <div className="text-3xl font-bold text-yellow-400 mb-1">{quizScore}/{totalQuestions}</div>
+            <div className="text-3xl font-bold text-yellow-400 mb-1">{correctAnswers}/{totalQuestions}</div> {/* Updated variable */}
             <div className="text-sm text-slate-300">Correct Answers</div>
           </div>
         </div>
@@ -97,7 +97,7 @@ export const StudyStats: React.FC<StudyStatsProps> = ({
       <div className="stats-card">
         <h4 className="text-lg font-semibold mb-4 text-slate-200">🏆 Achievements</h4>
         <div className="flex flex-wrap gap-3">
-          {quizPercentage >= 80 && (
+          {quizAccuracy >= 80 && ( // Updated variable
             <div className="px-3 py-1 bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30 rounded-full text-sm text-green-400">
               🌟 Quiz Master
             </div>
