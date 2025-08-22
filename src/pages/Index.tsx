@@ -79,11 +79,11 @@ const Index = () => {
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
           <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-green-400 bg-clip-text text-transparent mb-6 drop-shadow-lg">
-            StudyGenie ✨
+            QueueBee ✨
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
             Upload your PDF and get AI-generated quizzes and flashcards powered by 
-            <span className="text-blue-400 font-semibold"> Google Gemini</span>
+            <span className="text-blue-400 font-semibold"> Gen Ai</span>
           </p>
           <div className="mt-4 flex justify-center">
             <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm rounded-full px-4 py-2 border border-blue-500/30">
