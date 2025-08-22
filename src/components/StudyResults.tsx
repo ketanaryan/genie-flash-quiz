@@ -47,23 +47,26 @@ export const StudyResults: React.FC<StudyResultsProps> = ({ studyData }) => {
   return (
     <div className="max-w-4xl mx-auto animate-fade-in">
       <div className="flex justify-center mb-8">
-        <div className="bg-surface rounded-lg p-1 flex space-x-1">
+        <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-2 flex space-x-2 border border-slate-700/50 shadow-lg">
           <button
             onClick={() => setActiveTab('quiz')}
             className={`tab-button ${activeTab === 'quiz' ? 'active' : 'inactive'}`}
           >
+            <span className="mr-2">🧠</span>
             Interactive Quiz
           </button>
           <button
             onClick={() => setActiveTab('flashcards')}
             className={`tab-button ${activeTab === 'flashcards' ? 'active' : 'inactive'}`}
           >
+            <span className="mr-2">📚</span>
             Flashcards
           </button>
           <button
             onClick={() => setActiveTab('stats')}
             className={`tab-button ${activeTab === 'stats' ? 'active' : 'inactive'}`}
           >
+            <span className="mr-2">📊</span>
             Progress
           </button>
         </div>

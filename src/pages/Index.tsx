@@ -74,16 +74,22 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12 animate-fade-in">
-          <h1 className="text-5xl font-bold bg-hero-gradient bg-clip-text text-transparent mb-4">
-            StudyGenie
+          <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-green-400 bg-clip-text text-transparent mb-6 drop-shadow-lg">
+            StudyGenie ✨
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Upload your PDF and get AI-generated quizzes and flashcards powered by Google Gemini
+          <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
+            Upload your PDF and get AI-generated quizzes and flashcards powered by 
+            <span className="text-blue-400 font-semibold"> Google Gemini</span>
           </p>
+          <div className="mt-4 flex justify-center">
+            <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm rounded-full px-4 py-2 border border-blue-500/30">
+              <span className="text-sm text-blue-300">🚀 Smart AI Learning Assistant</span>
+            </div>
+          </div>
         </div>
 
         {/* Main Content */}

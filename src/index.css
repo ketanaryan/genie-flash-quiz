@@ -1,10 +1,42 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --background: 220 13% 7%;
+    --foreground: 210 40% 98%;
+    --card: 222 13% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 13% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 13% 11%;
+    --secondary: 217 32% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 28% 17%;
+    --muted-foreground: 217 10% 65%;
+    --accent: 217 32% 17%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 217 91% 60%;
+    --radius: 0.75rem;
+    
+    /* Custom gradient colors */
+    --gradient-start: 217 91% 60%;
+    --gradient-end: 142 71% 45%;
+    --surface: 222 13% 11%;
+    --surface-alt: 217 32% 17%;
+  }
+}
+
 /* Custom CSS */
 body {
-  @apply bg-background text-foreground;
+  @apply bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-foreground min-h-screen;
 }
 
 .container {
@@ -12,41 +44,47 @@ body {
 }
 
 .hero-button {
-  @apply inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2;
+  @apply inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 h-10 px-4 py-2 shadow-lg;
 }
 
 .input {
-  @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  @apply flex h-10 w-full rounded-md border border-input bg-background/50 backdrop-blur px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
 }
 
 .quiz-card {
-  @apply p-6 bg-card-gradient rounded-xl border border-border transition-all duration-300 hover:shadow-lg;
+  @apply p-6 bg-gradient-to-br from-slate-800/80 to-blue-900/60 backdrop-blur-sm rounded-xl border border-slate-700/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/20 hover:border-blue-500/50;
 }
 
 .tab-button {
-  @apply px-4 py-2 rounded-md transition-colors;
+  @apply px-6 py-3 rounded-lg transition-all duration-200 font-medium;
 }
 
 .tab-button.active {
-  @apply bg-primary text-primary-foreground shadow-md;
+  @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/30;
 }
 
 .tab-button.inactive {
-  @apply hover:bg-accent hover:text-accent-foreground;
+  @apply bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 hover:text-white border border-slate-600/50;
 }
 
 /* Animations */
 .animate-fade-in {
-  animation: fadeIn 0.5s ease-in-out forwards;
+  animation: fadeIn 0.6s ease-in-out forwards;
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.3s ease-in-out forwards;
+  animation: scaleIn 0.4s ease-in-out forwards;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { 
+    opacity: 0; 
+    transform: translateY(20px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
 }
 
 @keyframes scaleIn {
@@ -91,12 +129,15 @@ body {
   justify-content: center;
   padding: 2rem;
   border-radius: 1rem;
-  border: 1px solid hsl(var(--border));
-  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--card)/.8) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.6) 100%);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
 }
 
 .flashcard-back {
   transform: rotateY(180deg);
+  background: linear-gradient(145deg, rgba(79, 70, 229, 0.8) 0%, rgba(139, 92, 246, 0.6) 100%);
 }
 
 /* Enhanced animations */
@@ -106,8 +147,8 @@ body {
 }
 
 .quiz-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
 }
 
 .flashcard:hover .flashcard-inner {
@@ -116,4 +157,32 @@ body {
 
 .flashcard.flipped:hover .flashcard-inner {
   transform: rotateY(180deg) scale(1.02);
+}
+
+/* Stats cards */
+.stats-card {
+  @apply bg-gradient-to-br from-slate-800/80 to-blue-900/60 backdrop-blur-sm rounded-xl border border-slate-700/50 p-6 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20;
+}
+
+/* Upload area */
+.upload-area {
+  @apply bg-gradient-to-br from-slate-800/60 to-blue-900/40 backdrop-blur-sm border-2 border-dashed border-blue-500/30 rounded-xl p-8 transition-all duration-300 hover:border-blue-500/50 hover:bg-slate-800/70;
+}
+
+/* Progress bars */
+.progress-bar {
+  @apply bg-gradient-to-r from-blue-600 to-purple-600 rounded-full transition-all duration-500;
+}
+
+/* Glow effects */
+.glow-blue {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
 }
