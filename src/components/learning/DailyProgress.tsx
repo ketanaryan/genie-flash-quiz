@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { CheckCircle, Calendar, Target, MessageCircle, Loader2 } from 'lucide-react';
 
 interface DailyProgressProps {
@@ -30,6 +30,7 @@ export const DailyProgress: React.FC<DailyProgressProps> = ({ roadmap, onBack })
   const [progress, setProgress] = useState<Record<number, DayProgress>>({});
   const [loading, setLoading] = useState(false);
   const [feedbackLoading, setFeedbackLoading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchProgress();
@@ -106,22 +107,26 @@ export const DailyProgress: React.FC<DailyProgressProps> = ({ roadmap, onBack })
 
       if (progressError) throw progressError;
 
-      // Get AI feedback using Supabase edge function
-      const { data: feedbackData, error: feedbackError } = await supabase.functions.invoke('get-feedback', {
-        body: {
-          subject: roadmap.subject,
-          dayNumber: currentDay,
-          dayTarget: roadmap.roadmap_data?.days?.[currentDay - 1]?.target || '',
-          userInput: userInput.trim(),
-        },
-      });
+      // Try to get AI feedback
+      let feedback = 'Great job on completing today\'s task! Keep up the excellent work! 🎉';
+      
+      try {
+        const { data: feedbackData, error: feedbackError } = await supabase.functions.invoke('get-feedback', {
+          body: {
+            subject: roadmap.subject,
+            dayNumber: currentDay,
+            dayTarget: roadmap.roadmap_data?.days?.[currentDay - 1]?.target || '',
+            userInput: userInput.trim(),
+          },
+        });
 
-      if (feedbackError) {
-        console.error('Feedback error:', feedbackError);
-        throw new Error('Failed to get AI feedback');
+        if (!feedbackError && feedbackData?.feedback) {
+          feedback = feedbackData.feedback;
+        }
+      } catch (feedbackErr) {
+        console.error('Feedback error (non-critical):', feedbackErr);
+        // Use default feedback if AI feedback fails
       }
-
-      const feedback = feedbackData?.feedback || 'Great job on completing today\'s task! Keep up the excellent work! 🎉';
 
       // Update with AI feedback
       const { error: updateError } = await supabase

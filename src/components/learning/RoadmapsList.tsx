@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { BookOpen, Calendar, Target, Trash2 } from 'lucide-react';
 
 interface Roadmap {
@@ -21,6 +21,7 @@ interface RoadmapsListProps {
 export const RoadmapsList: React.FC<RoadmapsListProps> = ({ onSelectRoadmap, refreshTrigger }) => {
   const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   const fetchRoadmaps = async () => {
     try {

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { toast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Loader2, BookOpen } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -15,6 +15,7 @@ export const RoadmapCreator: React.FC<RoadmapCreatorProps> = ({ onRoadmapCreated
   const [subject, setSubject] = useState('');
   const [days, setDays] = useState(30);
   const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleCreateRoadmap = async (e: React.FormEvent) => {
     e.preventDefault();

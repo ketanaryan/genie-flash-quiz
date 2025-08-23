@@ -30,8 +30,20 @@ serve(async (req) => {
 
     console.log(`Creating roadmap for ${subject} - ${duration_days} days`)
 
+    // Get Gemini API key from environment
+    const geminiApiKey = Deno.env.get('GEMINI_API_KEY')
+    if (!geminiApiKey) {
+      console.error('GEMINI_API_KEY not found in environment')
+      return new Response(JSON.stringify({ 
+        error: 'API configuration error. Please contact support.' 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
     // Call Gemini API to generate roadmap
-    const geminiResponse = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyBBzb0nCGeCE6ok1WlMPePf-MK0GiCc9tk', {
+    const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -71,11 +83,51 @@ serve(async (req) => {
       })
     })
 
+    console.log('Gemini API response status:', geminiResponse.status)
+
     if (!geminiResponse.ok) {
-      throw new Error('Failed to generate roadmap with Gemini')
+      const errorText = await geminiResponse.text()
+      console.error('Gemini API error:', errorText)
+      
+      // Fallback to creating a simple roadmap
+      const fallbackRoadmap = {
+        days: Array.from({ length: duration_days }, (_, i) => ({
+          day: i + 1,
+          title: `Day ${i + 1}: Learning ${subject}`,
+          target: `Study and practice ${subject} concepts for day ${i + 1}`,
+          resources: [
+            `${subject} documentation`,
+            `${subject} tutorial videos`,
+            `${subject} practice exercises`
+          ]
+        }))
+      }
+
+      // Save fallback roadmap to database
+      const { data, error } = await supabase
+        .from('learning_roadmaps')
+        .insert({
+          user_id: user.id,
+          subject,
+          duration_days,
+          roadmap_data: fallbackRoadmap
+        })
+        .select()
+        .single()
+
+      if (error) {
+        console.error('Database error:', error)
+        throw error
+      }
+
+      return new Response(JSON.stringify({ success: true, roadmap: data }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
     }
 
     const geminiData = await geminiResponse.json()
+    console.log('Gemini response received')
+    
     const generatedText = geminiData.candidates[0].content.parts[0].text
 
     // Parse the JSON from Gemini response
@@ -90,7 +142,21 @@ serve(async (req) => {
       }
     } catch (parseError) {
       console.error('Failed to parse Gemini response:', parseError)
-      throw new Error('Failed to parse AI response')
+      console.error('Raw response:', generatedText)
+      
+      // Fallback roadmap if parsing fails
+      roadmapData = {
+        days: Array.from({ length: duration_days }, (_, i) => ({
+          day: i + 1,
+          title: `Day ${i + 1}: Learning ${subject}`,
+          target: `Study and practice ${subject} concepts for day ${i + 1}`,
+          resources: [
+            `${subject} documentation`,
+            `${subject} tutorial videos`,
+            `${subject} practice exercises`
+          ]
+        }))
+      }
     }
 
     // Ensure we have the right number of days
@@ -128,6 +194,7 @@ serve(async (req) => {
       throw error
     }
 
+    console.log('Roadmap saved successfully')
     return new Response(JSON.stringify({ success: true, roadmap: data }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
