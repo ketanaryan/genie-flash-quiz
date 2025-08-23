@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -107,25 +106,22 @@ export const DailyProgress: React.FC<DailyProgressProps> = ({ roadmap, onBack })
 
       if (progressError) throw progressError;
 
-      // Get AI feedback
-      const response = await fetch('/api/get-feedback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      // Get AI feedback using Supabase edge function
+      const { data: feedbackData, error: feedbackError } = await supabase.functions.invoke('get-feedback', {
+        body: {
           subject: roadmap.subject,
           dayNumber: currentDay,
           dayTarget: roadmap.roadmap_data?.days?.[currentDay - 1]?.target || '',
           userInput: userInput.trim(),
-        }),
+        },
       });
 
-      if (!response.ok) {
+      if (feedbackError) {
+        console.error('Feedback error:', feedbackError);
         throw new Error('Failed to get AI feedback');
       }
 
-      const { feedback } = await response.json();
+      const feedback = feedbackData?.feedback || 'Great job on completing today\'s task! Keep up the excellent work! 🎉';
 
       // Update with AI feedback
       const { error: updateError } = await supabase

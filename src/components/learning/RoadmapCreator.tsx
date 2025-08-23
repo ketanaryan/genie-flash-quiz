@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/ui/use-toast';
 import { Loader2, BookOpen } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface RoadmapCreatorProps {
   onRoadmapCreated: () => void;
@@ -29,20 +30,21 @@ export const RoadmapCreator: React.FC<RoadmapCreatorProps> = ({ onRoadmapCreated
     setLoading(true);
     
     try {
-      const response = await fetch('/api/create-roadmap', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      console.log('Creating roadmap for:', subject, 'Duration:', days);
+      
+      const { data, error } = await supabase.functions.invoke('create-roadmap', {
+        body: {
           subject: subject.trim(),
           duration_days: days
-        }),
+        },
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create roadmap');
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw error;
       }
+
+      console.log('Roadmap creation response:', data);
 
       toast({
         title: "Success! 🎉",
