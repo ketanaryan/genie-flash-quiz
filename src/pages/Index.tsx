@@ -1,118 +1,98 @@
 
 import React, { useState } from 'react';
-import { FileUpload } from '@/components/FileUpload';
-import { LoadingView } from '@/components/LoadingView';
-import { StudyResults } from '@/components/StudyResults';
-import { ErrorView } from '@/components/ErrorView';
-import { PDFService } from '@/services/pdfService';
-
-type AppState = 'idle' | 'loading' | 'success' | 'error';
-
-interface StudyData {
-  quiz: {
-    question: string;
-    options: string[];
-    correctAnswer: string;
-  }[];
-  flashcards: {
-    term: string;
-    definition: string;
-  }[];
-}
+import { LearningApp } from './LearningApp';
+import { Button } from '@/components/ui/button';
+import { BookOpen, Target, MessageCircle, BarChart3 } from 'lucide-react';
 
 const Index = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [appState, setAppState] = useState<AppState>('idle');
-  const [studyData, setStudyData] = useState<StudyData | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [showApp, setShowApp] = useState(false);
 
-  const handleFileSelect = (selectedFile: File) => {
-    setFile(selectedFile);
-    console.log('File selected:', selectedFile.name, selectedFile.type);
-  };
-
-  const handleGenerateStudySet = async () => {
-    if (!file) return;
-
-    setAppState('loading');
-    console.log('Starting PDF analysis with Gemini AI for file:', file.name);
-
-    try {
-      // Extract text from PDF using Gemini
-      console.log('Extracting and analyzing PDF content...');
-      const extractedText = await PDFService.extractTextFromPDF(file);
-      console.log('Text successfully extracted and analyzed');
-      
-      if (extractedText.length < 100) {
-        throw new Error('The PDF appears to contain insufficient readable content. Please try a different PDF with more text.');
-      }
-
-      // Generate study materials using the extracted text
-      console.log('Generating personalized study materials...');
-      const generatedStudyData = await PDFService.generateStudyMaterials(extractedText);
-      console.log('Study materials successfully generated:', generatedStudyData);
-
-      setStudyData(generatedStudyData);
-      setAppState('success');
-    } catch (error) {
-      console.error('Error processing PDF with Gemini:', error);
-      setAppState('error');
-      
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("We couldn't process your PDF. This might be due to the PDF format or content. Please try a different PDF with clear, readable text.");
-      }
-    }
-  };
-
-  const handleRetry = () => {
-    setAppState('idle');
-    setFile(null);
-    setStudyData(null);
-    setErrorMessage('');
-  };
+  if (showApp) {
+    return <LearningApp />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="text-center mb-12 animate-fade-in">
+        <div className="text-center mb-16 animate-fade-in">
           <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-green-400 bg-clip-text text-transparent mb-6 drop-shadow-lg">
-            QueueBee ✨
+            SmartLearn ✨
           </h1>
-          <p className="text-xl text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Upload your PDF and get AI-generated quizzes and flashcards powered by 
-            <span className="text-blue-400 font-semibold"> Gen Ai</span>
+          <p className="text-xl text-slate-300 max-w-3xl mx-auto leading-relaxed mb-8">
+            Create personalized learning roadmaps with AI-powered daily targets and motivational feedback. 
+            Master any subject with structured, adaptive learning paths designed just for you.
           </p>
-          <div className="mt-4 flex justify-center">
-            <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm rounded-full px-4 py-2 border border-blue-500/30">
-              <span className="text-sm text-blue-300">🚀 Smart AI Learning Assistant</span>
+          <div className="flex justify-center">
+            <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-sm rounded-full px-6 py-3 border border-blue-500/30">
+              <span className="text-blue-300">🚀 Powered by Gemini AI</span>
             </div>
           </div>
         </div>
 
-        {/* Main Content */}
-        {appState === 'idle' && (
-          <FileUpload 
-            file={file}
-            onFileSelect={handleFileSelect}
-            onGenerate={handleGenerateStudySet}
-          />
-        )}
+        {/* Features */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 shadow-xl">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-lg">
+                <BookOpen className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">AI Roadmaps</h3>
+            </div>
+            <p className="text-slate-300">
+              Get personalized learning paths for any subject, from 7 to 365 days
+            </p>
+          </div>
 
-        {appState === 'loading' && <LoadingView />}
+          <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 shadow-xl">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg">
+                <Target className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">Daily Targets</h3>
+            </div>
+            <p className="text-slate-300">
+              Clear, achievable goals for each day with curated resources
+            </p>
+          </div>
 
-        {appState === 'success' && studyData && (
-          <StudyResults studyData={studyData} />
-        )}
+          <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 shadow-xl">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg">
+                <MessageCircle className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">AI Feedback</h3>
+            </div>
+            <p className="text-slate-300">
+              Get motivational feedback and guidance based on your progress
+            </p>
+          </div>
 
-        {appState === 'error' && (
-          <ErrorView 
-            message={errorMessage}
-            onRetry={handleRetry}
-          />
-        )}
+          <div className="bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50 shadow-xl">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="p-2 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-lg">
+                <BarChart3 className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">Progress Tracking</h3>
+            </div>
+            <p className="text-slate-300">
+              Visualize your learning journey and celebrate achievements
+            </p>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="text-center">
+          <Button
+            onClick={() => setShowApp(true)}
+            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-lg px-8 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            Start Your Learning Journey
+          </Button>
+          <p className="text-slate-400 mt-4">
+            No credit card required • Free to start
+          </p>
+        </div>
       </div>
     </div>
   );

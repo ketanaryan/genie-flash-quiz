@@ -14,7 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      daily_progress: {
+        Row: {
+          ai_feedback: string | null
+          completed: boolean | null
+          created_at: string
+          day_number: number
+          id: string
+          roadmap_id: string
+          updated_at: string
+          user_input: string | null
+        }
+        Insert: {
+          ai_feedback?: string | null
+          completed?: boolean | null
+          created_at?: string
+          day_number: number
+          id?: string
+          roadmap_id: string
+          updated_at?: string
+          user_input?: string | null
+        }
+        Update: {
+          ai_feedback?: string | null
+          completed?: boolean | null
+          created_at?: string
+          day_number?: number
+          id?: string
+          roadmap_id?: string
+          updated_at?: string
+          user_input?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_progress_roadmap_id_fkey"
+            columns: ["roadmap_id"]
+            isOneToOne: false
+            referencedRelation: "learning_roadmaps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_roadmaps: {
+        Row: {
+          created_at: string
+          duration_days: number
+          id: string
+          roadmap_data: Json
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration_days: number
+          id?: string
+          roadmap_data: Json
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          duration_days?: number
+          id?: string
+          roadmap_data?: Json
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
